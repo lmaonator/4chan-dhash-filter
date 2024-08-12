@@ -3,7 +3,7 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
 
 (async () => {
   const hammingDistance = 5;
-  const styleFilter = "blur(5px) grayscale(0.6)";
+  const styleFilter = "blur(8px) grayscale(0.75)";
 
   /** Get hash list
    * @returns {Promise<string[]>}
@@ -96,7 +96,7 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
       const found = tree.lookup(hash, hammingDistance);
       if (found !== null) {
         console.log(
-          `filtering image based on dHash, hamming distance ${found.distance}, url ${src}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}`,
+          `filtering image based on dHash, hamming distance ${found.distance}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}, url ${src}`,
         );
         imgLink.style.filter = styleFilter;
       }
@@ -105,11 +105,17 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
         if (e.ctrlKey && e.altKey) {
           e.preventDefault();
           if (await updateHashList(hash)) {
-            alert(`Added image to filter list\ndHash: ${hash.toString()}`);
             imgLink.style.filter = styleFilter;
+            console.log(
+              `Added image to filter list, dHash: ${hash.toString()}`,
+            );
+            alert(`Added image to filter list\ndHash: ${hash.toString()}`);
           } else {
-            alert(`Removed image from filter list\ndHash: ${hash.toString()}`);
             imgLink.style.filter = "";
+            console.log(
+              `Removed image from filter list, dHash: ${hash.toString()}`,
+            );
+            alert(`Removed image from filter list\ndHash: ${hash.toString()}`);
           }
         }
       });
