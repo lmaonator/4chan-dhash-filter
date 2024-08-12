@@ -78,7 +78,7 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
       const imgLink = post.querySelector("a.fileThumb");
       if (imgLink === null) return;
 
-      const src = imgLink.href.replace(".jpg", "s.jpg");
+      const src = imgLink.href.replace(/\.(jpg|png|gif)$/, "s.jpg");
 
       let hash;
       const cachedHash = sessionStorage.getItem(src);
