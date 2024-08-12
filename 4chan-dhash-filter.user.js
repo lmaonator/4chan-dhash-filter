@@ -8,7 +8,7 @@
 // @version     0.1.0
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
-// @downloadURL https://raw.githubusercontent.com/lmaonator/4chan-dhash-filter/main/4chan-dhash-filter.user.js
+// @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
 // @homepageURL https://github.com/lmaonator/4chan-dhash-filter
 // @supportURL  https://github.com/lmaonator/4chan-dhash-filter/issues
 // ==/UserScript==
