@@ -1,0 +1,15 @@
+// ==UserScript==
+// @name        4chan dHash image filter
+// @namespace   https://github.com/lmaonator/4chan-dhash-filter
+// @match       https://*.4chan.org/*
+// @grant       GM_xmlhttpRequest
+// @grant       GM_setValue
+// @grant       GM_getValue
+// @version     0.1.0
+// @author      lmaonator
+// @description A 4chan userscript to filter images based on dHash
+// @downloadURL https://raw.githubusercontent.com/lmaonator/4chan-dhash-filter/main/4chan-dhash-filter.user.js
+// @homepageURL https://github.com/lmaonator/4chan-dhash-filter
+// @supportURL  https://github.com/lmaonator/4chan-dhash-filter/issues
+// ==/UserScript==
+

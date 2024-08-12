@@ -1,0 +1,20 @@
+{
+  "name": "4chan-dhash-filter",
+  "version": "0.1.0",
+  "description": "A 4chan userscript to filter images based on dHash",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "./build.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lmaonator",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "browser-image-hash": "^0.0.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "esbuild": "0.23.0"
+  }
+}
