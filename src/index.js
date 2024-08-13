@@ -71,10 +71,15 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
     });
   }
 
+  function hoverStopListener(e) {
+    e.stopImmediatePropagation();
+  }
+
   const builder = new DifferenceHashBuilder();
 
   async function filter(post) {
     try {
+      /** @type {HTMLAnchorElement|null} */
       const imgLink = post.querySelector("a.fileThumb");
       if (imgLink === null) return;
 
@@ -99,18 +104,27 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
           `filtering image based on dHash, hamming distance ${found.distance}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}, url ${src}`,
         );
         imgLink.style.filter = styleFilter;
+        imgLink.addEventListener("mouseover", hoverStopListener, {
+          capture: true,
+        });
       }
 
       post.addEventListener("click", async (e) => {
         if (e.ctrlKey && e.altKey) {
           e.preventDefault();
           if (await updateHashList(hash)) {
+            imgLink.addEventListener("mouseover", hoverStopListener, {
+              capture: true,
+            });
             imgLink.style.filter = styleFilter;
             console.log(
               `Added image to filter list, dHash: ${hash.toString()}`,
             );
             alert(`Added image to filter list\ndHash: ${hash.toString()}`);
           } else {
+            imgLink.removeEventListener("mouseover", hoverStopListener, {
+              capture: true,
+            });
             imgLink.style.filter = "";
             console.log(
               `Removed image from filter list, dHash: ${hash.toString()}`,
