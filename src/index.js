@@ -120,7 +120,6 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
             console.log(
               `Added image to filter list, dHash: ${hash.toString()}`,
             );
-            alert(`Added image to filter list\ndHash: ${hash.toString()}`);
           } else {
             imgLink.removeEventListener("mouseover", hoverStopListener, {
               capture: true,
@@ -129,7 +128,6 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
             console.log(
               `Removed image from filter list, dHash: ${hash.toString()}`,
             );
-            alert(`Removed image from filter list\ndHash: ${hash.toString()}`);
           }
         }
       });
