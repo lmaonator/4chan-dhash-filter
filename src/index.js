@@ -98,13 +98,15 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
         sessionStorage.setItem(src, hash.rawHash);
       }
 
+      const img = imgLink.querySelector("img");
+
       const found = tree.lookup(hash, hammingDistance);
       if (found !== null) {
         console.log(
           `filtering image based on dHash, hamming distance ${found.distance}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}, url ${src}`,
         );
-        imgLink.style.filter = styleFilter;
-        imgLink.addEventListener("mouseover", hoverStopListener, {
+        img.style.filter = styleFilter;
+        img.addEventListener("mouseover", hoverStopListener, {
           capture: true,
         });
       }
@@ -113,18 +115,18 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
         if (e.ctrlKey && e.altKey) {
           e.preventDefault();
           if (await updateHashList(hash)) {
-            imgLink.addEventListener("mouseover", hoverStopListener, {
+            img.addEventListener("mouseover", hoverStopListener, {
               capture: true,
             });
-            imgLink.style.filter = styleFilter;
+            img.style.filter = styleFilter;
             console.log(
               `Added image to filter list, dHash: ${hash.toString()}`,
             );
           } else {
-            imgLink.removeEventListener("mouseover", hoverStopListener, {
+            img.removeEventListener("mouseover", hoverStopListener, {
               capture: true,
             });
-            imgLink.style.filter = "";
+            img.style.filter = "";
             console.log(
               `Removed image from filter list, dHash: ${hash.toString()}`,
             );
