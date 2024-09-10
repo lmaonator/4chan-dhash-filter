@@ -1,22 +1,22 @@
 import { BKTree } from "./bktree";
 import { DifferenceHashBuilder, Hash } from "browser-image-hash";
+import loadConfig from "./config";
 
 (async () => {
-  const hammingDistance = 5;
-  const styleFilter = "blur(8px) grayscale(0.75)";
+  const cfg = await loadConfig();
 
   /** Get hash list
    * @returns {Promise<string[]>}
    */
   async function getHashList() {
-    return JSON.parse(await GM_getValue("hash_list", "[]"));
+    return JSON.parse(await GM.getValue("hash_list", "[]"));
   }
 
   /** Save hash list
    * @param {string[]} hashList
    */
-  function saveHashList(hashList) {
-    GM_setValue("hash_list", JSON.stringify(hashList));
+  async function saveHashList(hashList) {
+    await GM.setValue("hash_list", JSON.stringify(hashList));
   }
 
   /** Build BKTree with all hashes
@@ -50,14 +50,14 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
       hashList.push(hash.rawHash);
       added = true;
     }
-    saveHashList(hashList);
+    await saveHashList(hashList);
     tree = await buildTree(hashList);
     return added;
   }
 
   async function blobRequest(url) {
     return new Promise((resolve, reject) => {
-      GM_xmlhttpRequest({
+      GM.xmlhttpRequest({
         method: "GET",
         url: url,
         responseType: "blob",
@@ -69,6 +69,21 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
         },
       });
     });
+  }
+
+  function hidePost(post) {
+    // 4chan X
+    const minus = post.querySelector("a.hide-reply-button");
+    if (minus !== null) {
+      minus.click();
+      return;
+    }
+    // native
+    const id = post.querySelector('input[type="checkbox"][value="delete"]');
+    if (id !== null) {
+      ReplyHiding.hide(id);
+      return;
+    }
   }
 
   function hoverStopListener(e) {
@@ -100,12 +115,17 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
 
       const img = imgLink.querySelector("img");
 
-      const found = tree.lookup(hash, hammingDistance);
+      const found = tree.lookup(hash, cfg.hammingDistance);
       if (found !== null) {
         console.log(
           `filtering image based on dHash, hamming distance ${found.distance}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}, url ${src}`,
         );
-        img.style.filter = styleFilter;
+        if (cfg.hide) {
+          hidePost(post);
+        }
+        if (cfg.blur) {
+          img.style.filter = cfg.blurStyle;
+        }
         img.addEventListener("mouseover", hoverStopListener, {
           capture: true,
         });
@@ -118,7 +138,12 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
             img.addEventListener("mouseover", hoverStopListener, {
               capture: true,
             });
-            img.style.filter = styleFilter;
+            if (cfg.hide) {
+              hidePost(post);
+            }
+            if (cfg.blur) {
+              img.style.filter = cfg.blurStyle;
+            }
             console.log(
               `Added image to filter list, dHash: ${hash.toString()}`,
             );
@@ -126,7 +151,9 @@ import { DifferenceHashBuilder, Hash } from "browser-image-hash";
             img.removeEventListener("mouseover", hoverStopListener, {
               capture: true,
             });
-            img.style.filter = "";
+            if (cfg.blur) {
+              img.style.filter = "";
+            }
             console.log(
               `Removed image from filter list, dHash: ${hash.toString()}`,
             );

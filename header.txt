@@ -2,9 +2,11 @@
 // @name        4chan dHash image filter
 // @namespace   https://github.com/lmaonator/4chan-dhash-filter
 // @match       https://*.4chan.org/*
-// @grant       GM_xmlhttpRequest
-// @grant       GM_setValue
-// @grant       GM_getValue
+// @grant       GM.xmlhttpRequest
+// @grant       GM.setValue
+// @grant       GM.getValue
+// @grant       GM.getValues
+// @grant       GM.setValues
 // @version     0.1.0
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
