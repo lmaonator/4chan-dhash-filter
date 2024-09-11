@@ -72,18 +72,20 @@ import loadConfig from "./config";
   }
 
   function hidePost(post) {
-    // 4chan X
-    const minus = post.querySelector("a.hide-reply-button");
-    if (minus !== null) {
-      minus.click();
-      return;
-    }
-    // native
-    const id = post.querySelector('input[type="checkbox"][value="delete"]');
-    if (id !== null) {
-      ReplyHiding.hide(id.name);
-      return;
-    }
+    setTimeout(() => {
+      // 4chan X
+      const minus = post.querySelector("a.hide-reply-button");
+      if (minus !== null) {
+        minus.click();
+        return;
+      }
+      // native
+      const id = post.querySelector('input[type="checkbox"][value="delete"]');
+      if (id !== null) {
+        ReplyHiding.hide(id.name);
+        return;
+      }
+    }, 1000);
   }
 
   function hoverStopListener(e) {
