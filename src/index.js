@@ -81,7 +81,7 @@ import loadConfig from "./config";
     // native
     const id = post.querySelector('input[type="checkbox"][value="delete"]');
     if (id !== null) {
-      ReplyHiding.hide(id);
+      ReplyHiding.hide(id.name);
       return;
     }
   }
