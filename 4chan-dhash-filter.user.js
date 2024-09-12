@@ -2,10 +2,12 @@
 // @name        4chan dHash image filter
 // @namespace   https://github.com/lmaonator/4chan-dhash-filter
 // @match       https://*.4chan.org/*
-// @grant       GM_xmlhttpRequest
-// @grant       GM_setValue
-// @grant       GM_getValue
-// @version     0.1.0
+// @grant       GM.xmlhttpRequest
+// @grant       GM.setValue
+// @grant       GM.getValue
+// @grant       GM.getValues
+// @grant       GM.setValues
+// @version     0.2.0
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
 // @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
@@ -791,15 +793,32 @@
     }
   };
 
+  // src/config.js
+  var defaults = {
+    initialized: false,
+    hammingDistance: 10,
+    hide: true,
+    blur: true,
+    blurStyle: "blur(8px) grayscale(0.75)"
+  };
+  async function config_default() {
+    const conf = await GM.getValues(defaults);
+    if (conf.initialized === false) {
+      conf.initialized = true;
+      await GM.setValues(conf);
+    }
+    return conf;
+  }
+
   // src/index.js
   (async () => {
-    const hammingDistance = 5;
-    const styleFilter = "blur(5px) grayscale(0.6)";
+    const cfg = await config_default();
+    const FOURCHANX = document.documentElement.classList.contains("fourchan-x");
     async function getHashList() {
-      return JSON.parse(await GM_getValue("hash_list", "[]"));
+      return JSON.parse(await GM.getValue("hash_list", "[]"));
     }
-    function saveHashList(hashList) {
-      GM_setValue("hash_list", JSON.stringify(hashList));
+    async function saveHashList(hashList) {
+      await GM.setValue("hash_list", JSON.stringify(hashList));
     }
     async function buildTree(hashList) {
       const tree2 = new BKTree();
@@ -821,13 +840,13 @@
         hashList.push(hash.rawHash);
         added = true;
       }
-      saveHashList(hashList);
+      await saveHashList(hashList);
       tree = await buildTree(hashList);
       return added;
     }
     async function blobRequest(url) {
       return new Promise((resolve, reject) => {
-        GM_xmlhttpRequest({
+        GM.xmlhttpRequest({
           method: "GET",
           url,
           responseType: "blob",
@@ -840,12 +859,28 @@
         });
       });
     }
+    function hidePost(post) {
+      if (FOURCHANX) {
+        const minus = post.querySelector("a.hide-reply-button");
+        if (minus !== null) {
+          minus.click();
+        }
+      } else {
+        const id = post.querySelector('input[type="checkbox"][value="delete"]');
+        if (id !== null) {
+          ReplyHiding.hide(id.name);
+        }
+      }
+    }
+    function hoverStopListener(e) {
+      e.stopImmediatePropagation();
+    }
     const builder = new DifferenceHashBuilder_default();
     async function filter(post) {
       try {
         const imgLink = post.querySelector("a.fileThumb");
         if (imgLink === null) return;
-        const src = imgLink.href.replace(".jpg", "s.jpg");
+        const src = imgLink.href.replace(/\.(jpg|png|gif)$/, "s.jpg");
         let hash;
         const cachedHash = sessionStorage.getItem(src);
         if (cachedHash !== null) {
@@ -857,24 +892,48 @@
           console.log("Hashed thumbnail", src, hash.toString());
           sessionStorage.setItem(src, hash.rawHash);
         }
-        const found = tree.lookup(hash, hammingDistance);
+        const img = imgLink.querySelector("img");
+        const found = tree.lookup(hash, cfg.hammingDistance);
         if (found !== null) {
           console.log(
-            `filtering image based on dHash, hamming distance ${found.distance}, url ${src}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}`
+            `filtering image based on dHash, hamming distance ${found.distance}, dhash ${hash.toString()}, filter entry dhash ${found.hash.toString()}, url ${src}`
           );
-          imgLink.style.filter = styleFilter;
+          if (cfg.hide) {
+            hidePost(post);
+          }
+          if (cfg.blur) {
+            img.style.filter = cfg.blurStyle;
+          }
+          img.addEventListener("mouseover", hoverStopListener, {
+            capture: true
+          });
         }
         post.addEventListener("click", async (e) => {
           if (e.ctrlKey && e.altKey) {
             e.preventDefault();
             if (await updateHashList(hash)) {
-              alert(`Added image to filter list
-dHash: ${hash.toString()}`);
-              imgLink.style.filter = styleFilter;
+              img.addEventListener("mouseover", hoverStopListener, {
+                capture: true
+              });
+              if (cfg.hide) {
+                hidePost(post);
+              }
+              if (cfg.blur) {
+                img.style.filter = cfg.blurStyle;
+              }
+              console.log(
+                `Added image to filter list, dHash: ${hash.toString()}`
+              );
             } else {
-              alert(`Removed image from filter list
-dHash: ${hash.toString()}`);
-              imgLink.style.filter = "";
+              img.removeEventListener("mouseover", hoverStopListener, {
+                capture: true
+              });
+              if (cfg.blur) {
+                img.style.filter = "";
+              }
+              console.log(
+                `Removed image from filter list, dHash: ${hash.toString()}`
+              );
             }
           }
         });
