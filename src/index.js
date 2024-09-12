@@ -5,6 +5,8 @@ import loadConfig from "./config";
 (async () => {
   const cfg = await loadConfig();
 
+  const FOURCHANX = document.documentElement.classList.contains("fourchan-x");
+
   /** Get hash list
    * @returns {Promise<string[]>}
    */
@@ -72,20 +74,17 @@ import loadConfig from "./config";
   }
 
   function hidePost(post) {
-    setTimeout(() => {
-      // 4chan X
+    if (FOURCHANX) {
       const minus = post.querySelector("a.hide-reply-button");
       if (minus !== null) {
         minus.click();
-        return;
       }
-      // native
+    } else {
       const id = post.querySelector('input[type="checkbox"][value="delete"]');
       if (id !== null) {
         ReplyHiding.hide(id.name);
-        return;
       }
-    }, 1000);
+    }
   }
 
   function hoverStopListener(e) {
