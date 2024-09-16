@@ -7,7 +7,7 @@
 // @grant       GM.getValue
 // @grant       GM.getValues
 // @grant       GM.setValues
-// @version     0.2.0
+// @version     0.2.1
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
 // @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
@@ -861,6 +861,7 @@
     }
     function hidePost(post) {
       if (FOURCHANX) {
+        if (post.querySelector("div.stub") !== null) return;
         const minus = post.querySelector("a.hide-reply-button");
         if (minus !== null) {
           minus.click();
