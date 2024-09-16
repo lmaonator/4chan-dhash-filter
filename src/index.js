@@ -75,6 +75,7 @@ import loadConfig from "./config";
 
   function hidePost(post) {
     if (FOURCHANX) {
+      if (post.querySelector("div.stub") !== null) return;
       const minus = post.querySelector("a.hide-reply-button");
       if (minus !== null) {
         minus.click();
