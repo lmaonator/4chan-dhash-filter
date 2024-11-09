@@ -7,7 +7,7 @@
 // @grant       GM.getValue
 // @grant       GM.getValues
 // @grant       GM.setValues
-// @version     0.2.1
+// @version     0.2.2
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
 // @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
@@ -881,7 +881,7 @@
       try {
         const imgLink = post.querySelector("a.fileThumb");
         if (imgLink === null) return;
-        const src = imgLink.href.replace(/\.(jpg|png|gif)$/, "s.jpg");
+        const src = imgLink.href.replace(/\.(jpg|png|gif|mp4|webm)$/, "s.jpg");
         let hash;
         const cachedHash = sessionStorage.getItem(src);
         if (cachedHash !== null) {
