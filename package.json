@@ -1,6 +1,6 @@
 {
   "name": "4chan-dhash-filter",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A 4chan userscript to filter images based on dHash",
   "main": "src/index.js",
   "scripts": {
