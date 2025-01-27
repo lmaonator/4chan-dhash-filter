@@ -112,7 +112,20 @@ import loadConfig from "./config";
         const url = window.URL.createObjectURL(blob);
         hash = await builder.build(url);
         console.log("Hashed thumbnail", src, hash.toString());
-        sessionStorage.setItem(src, hash.rawHash);
+        try {
+          sessionStorage.setItem(src, hash.rawHash);
+        } catch (e) {
+          if (e instanceof DOMException && e.name === "QuotaExceededError") {
+            for (const k of Object.keys(sessionStorage)) {
+              if (k.endsWith("s.jpg")) {
+                sessionStorage.removeItem(k);
+              }
+            }
+            sessionStorage.setItem(src, hash.rawHash);
+          } else {
+            throw e;
+          }
+        }
       }
 
       const img = imgLink.querySelector("img");
