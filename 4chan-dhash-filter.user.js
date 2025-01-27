@@ -7,7 +7,7 @@
 // @grant       GM.getValue
 // @grant       GM.getValues
 // @grant       GM.setValues
-// @version     0.2.2
+// @version     0.2.3
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
 // @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
@@ -891,7 +891,20 @@
           const url = window.URL.createObjectURL(blob);
           hash = await builder.build(url);
           console.log("Hashed thumbnail", src, hash.toString());
-          sessionStorage.setItem(src, hash.rawHash);
+          try {
+            sessionStorage.setItem(src, hash.rawHash);
+          } catch (e) {
+            if (e instanceof DOMException && e.name === "QuotaExceededError") {
+              for (const k of Object.keys(sessionStorage)) {
+                if (k.endsWith("s.jpg")) {
+                  sessionStorage.removeItem(k);
+                }
+              }
+              sessionStorage.setItem(src, hash.rawHash);
+            } else {
+              throw e;
+            }
+          }
         }
         const img = imgLink.querySelector("img");
         const found = tree.lookup(hash, cfg.hammingDistance);

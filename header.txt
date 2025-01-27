@@ -7,7 +7,7 @@
 // @grant       GM.getValue
 // @grant       GM.getValues
 // @grant       GM.setValues
-// @version     0.2.2
+// @version     0.2.3
 // @author      lmaonator
 // @description A 4chan userscript to filter images based on dHash
 // @downloadURL https://github.com/lmaonator/4chan-dhash-filter/raw/main/4chan-dhash-filter.user.js
